@@ -712,6 +712,17 @@
             margin-bottom: 16px;
         }
 
+        .share-card-image {
+            width: 100%;
+            margin: 16px 0;
+        }
+        
+        .share-card-image canvas {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+        }
+
         .share-card-footer {
             text-align: center;
         }
@@ -851,19 +862,23 @@
             </div>
         </div>
 
-        <!-- 分享卡片 -->
+        <!-- 分享卡片（Canvas图片） -->
         <div class="share-overlay" id="shareOverlay"></div>
         <div class="share-card" id="shareCard">
             <button class="share-close" id="shareClose">✕</button>
             <div class="share-card-header">
                 <p class="share-card-title">我的恋爱废物类型</p>
-                <p class="share-card-type" id="shareType"></p>
             </div>
-            <div class="share-card-body" id="shareBody"></div>
+            <div class="share-card-image">
+                <canvas id="shareCanvas" width="300" height="400"></canvas>
+            </div>
             <div class="share-card-footer">
                 <p class="share-card-tip">长按保存图片 · 分享给朋友</p>
             </div>
         </div>
+        
+        <!-- 隐藏的分享Canvas（用于生成图片） -->
+        <canvas id="shareGenerateCanvas" width="600" height="800" style="display:none;"></canvas>
     </div>
 
     <script>
@@ -1222,7 +1237,7 @@
                     '把手机交给闺蜜保管，每次想查看对方动态时，让闺蜜拿着手机',
                     '记住：你的人生除了恋爱还有很多事，比如搞钱'
                 ],
-                condition: (r) => r.highest === '恋爱投入' && (r.secondHighest === '浪漫浓度' || r.pct['浪漫浓度'] > 60)
+                condition: (r) => r.highest === '恋爱投入'
             },
             {
                 id: 2,
@@ -1236,7 +1251,7 @@
                     '想暧昧前先问自己：真的喜欢吗？还是只是寂寞？',
                     '负责任的恋爱，比无效的暧昧更爽'
                 ],
-                condition: (r) => r.lowest === '表达力' && (r.secondLowest === '期待管理' || r.lowest === '期待管理')
+                condition: (r) => r.lowest === '表达力'
             },
             {
                 id: 3,
@@ -1278,7 +1293,7 @@
                     '参加一些兴趣小组，打开社交圈',
                     '星座血型可以信，但别让它们成为你的借口'
                 ],
-                condition: (r) => r.lowest === '浪漫浓度' && (r.lowest === '表达力' || r.secondLowest === '表达力')
+                condition: (r) => r.lowest === '浪漫浓度'
             },
             {
                 id: 6,
@@ -1292,7 +1307,7 @@
                     '把对方当普通人看待，别神化TA',
                     '害怕拒绝？那就先从小事练习，比如问路'
                 ],
-                condition: (r) => r.lowest === '表达力' && (r.lowest === '安全感' || r.secondLowest === '安全感')
+                condition: (r) => r.lowest === '安全感'
             },
             {
                 id: 7,
@@ -1306,7 +1321,7 @@
                     '与其被动的等人选，不如主动筛选',
                     '记住：你的价值不是由别人对你的态度决定的'
                 ],
-                condition: (r) => r.lowest === '安全感' && r.secondLowest === '恋爱投入'
+                condition: (r) => (r.lowest === '安全感' || r.secondLowest === '安全感') && (r.lowest === '恋爱投入' || r.secondLowest === '恋爱投入')
             },
             {
                 id: 8,
@@ -1320,7 +1335,7 @@
                     '发一条消息不会死，但错过可能会后悔',
                     '主动是勇气，不是卑微'
                 ],
-                condition: (r) => r.highest === '独立性' && (r.lowest === '表达力' || r.secondLowest === '表达力')
+                condition: (r) => r.lowest === '表达力' && (r.highest === '独立性' || r.secondHighest === '独立性')
             },
             {
                 id: 9,
@@ -1362,7 +1377,7 @@
                     '给自己设定一个"多想警报"，触发后就去做点别的事',
                     'TA没那么多内心戏，是你想太多了'
                 ],
-                condition: (r) => r.highest === '浪漫浓度' && r.secondLowest === '安全感'
+                condition: (r) => r.highest === '浪漫浓度' && (r.lowest === '安全感' || r.secondLowest === '安全感')
             },
             {
                 id: 12,
@@ -1390,7 +1405,7 @@
                     '学会说"不"，你的感受很重要',
                     '记住：你值得被好好对待'
                 ],
-                condition: (r) => r.lowest === '安全感' && (r.lowest === '表达力' || r.secondLowest === '表达力')
+                condition: (r) => r.lowest === '安全感' && r.highest !== '独立性'
             },
             {
                 id: 14,
@@ -1474,7 +1489,7 @@
                     '真诚比数量更重要',
                     '总有一天你会累的，不如早点上岸'
                 ],
-                condition: (r) => r.highest === '独立性' && (r.highest === '期待管理' || r.secondHighest === '期待管理') && r.highest !== '恋爱投入'
+                condition: (r) => r.highest === '独立性' && (r.highest === '期待管理' || r.secondHighest === '期待管理')
             },
             {
                 id: 20,
@@ -1488,7 +1503,7 @@
                     '如果真的想要改变，就从"今天做一件不一样的事"开始',
                     '躺平可以，但别一边躺一边抱怨'
                 ],
-                condition: (r) => r.highest === '务实度' && (r.lowest === '恋爱投入' || r.secondLowest === '恋爱投入') && r.highest !== '独立性'
+                condition: (r) => r.highest === '务实度'
             }
         ];
 
@@ -1681,7 +1696,12 @@ function getPersonalityImage(name) {
             document.getElementById('questionText').textContent = q.text;
             
             const optionsEl = document.getElementById('options');
+            // 强制清空所有内容
             optionsEl.innerHTML = '';
+            optionsEl.classList.remove('fade-in');
+            // 强制重绘
+            void optionsEl.offsetWidth;
+            optionsEl.classList.add('fade-in');
             
             const letters = ['A', 'B', 'C', 'D', 'E'];
             
@@ -1870,8 +1890,119 @@ function getPersonalityImage(name) {
             renderRadarLabels();
             
             // 设置分享卡片
-            document.getElementById('shareType').textContent = mainPersonality.name;
-            document.getElementById('shareBody').textContent = mainPersonality.tagline;
+            // document.getElementById('shareType').textContent = mainPersonality.name;
+            // document.getElementById('shareBody').textContent = mainPersonality.tagline;
+            
+            // 生成分享图片
+            generateShareImage(mainPersonality, pct);
+        }
+        
+        // ============ 生成分享图片 ============
+        function generateShareImage(personality, pct) {
+            const canvas = document.getElementById('shareCanvas');
+            const ctx = canvas.getContext('2d');
+            const width = 300;
+            const height = 400;
+            
+            // 清空画布
+            ctx.clearRect(0, 0, width, height);
+            
+            // 绘制背景
+            const gradient = ctx.createLinearGradient(0, 0, 0, height);
+            gradient.addColorStop(0, '#fffcf9');
+            gradient.addColorStop(1, '#faf8f5');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+            
+            // 绘制装饰圆
+            ctx.fillStyle = 'rgba(255, 143, 163, 0.1)';
+            ctx.beginPath();
+            ctx.arc(250, 50, 80, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = 'rgba(152, 212, 187, 0.1)';
+            ctx.beginPath();
+            ctx.arc(50, 350, 60, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 标题
+            ctx.fillStyle = '#4a4a4a';
+            ctx.font = '14px "PingFang SC", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('我的恋爱废物类型', width / 2, 40);
+            
+            // 人格名称
+            ctx.fillStyle = '#ff8fa3';
+            ctx.font = 'bold 24px "PingFang SC", sans-serif';
+            ctx.fillText(personality.name, width / 2, 80);
+            
+            // 人格标语
+            ctx.fillStyle = '#9b9b9b';
+            ctx.font = '12px "PingFang SC", sans-serif';
+            // 文字换行
+            const tagline = personality.tagline;
+            const maxWidth = width - 60;
+            let line = '';
+            let y = 110;
+            for (let char of tagline) {
+                const testLine = line + char;
+                if (ctx.measureText(testLine).width > maxWidth) {
+                    ctx.fillText(line, width / 2, y);
+                    line = char;
+                    y += 18;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line, width / 2, y);
+            
+            // 绘制小雷达图
+            const radarX = width / 2;
+            const radarY = 220;
+            const radarR = 50;
+            const radarSides = 8;
+            const radarAngle = (Math.PI * 2) / radarSides;
+            
+            // 雷达图背景
+            ctx.strokeStyle = '#f0ebe5';
+            ctx.lineWidth = 1;
+            for (let i = 1; i <= 3; i++) {
+                ctx.beginPath();
+                const r = radarR * i / 3;
+                for (let j = 0; j <= radarSides; j++) {
+                    const angle = radarAngle * j - Math.PI / 2;
+                    const x = radarX + r * Math.cos(angle);
+                    const y = radarY + r * Math.sin(angle);
+                    if (j === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.stroke();
+            }
+            
+            // 雷达图数据
+            const values = Object.values(pct);
+            ctx.beginPath();
+            for (let i = 0; i < radarSides; i++) {
+                const value = values[i] / 100;
+                const angle = radarAngle * i - Math.PI / 2;
+                const x = radarX + radarR * value * Math.cos(angle);
+                const y = radarY + radarR * value * Math.sin(angle);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(255, 143, 163, 0.3)';
+            ctx.fill();
+            ctx.strokeStyle = '#ff8fa3';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // 底部提示
+            ctx.fillStyle = '#b5b5b5';
+            ctx.font = '10px "PingFang SC", sans-serif';
+            ctx.fillText('长按保存图片分享给朋友', width / 2, height - 30);
+            ctx.fillText('恋爱废物测试', width / 2, height - 15);
         }
 
         // ============ 雷达图 ============
