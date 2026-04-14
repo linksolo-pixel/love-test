@@ -870,7 +870,7 @@
                 <p class="share-card-title">我的恋爱废物类型</p>
             </div>
             <div class="share-card-image">
-                <canvas id="shareCanvas" width="300" height="400"></canvas>
+                <img id="shareImage" src="" alt="分享图片" style="width:100%;border-radius:12px;">
             </div>
             <div class="share-card-footer">
                 <p class="share-card-tip">长按保存图片 · 分享给朋友</p>
@@ -1738,7 +1738,7 @@ function getPersonalityImage(name) {
                 });
             }
             
-            optionsEl.classList.add('fade-in');
+            // fade-in已在上面的强制重绘代码中添加
         }
 
         // ============ 单选题 ============
@@ -1899,10 +1899,12 @@ function getPersonalityImage(name) {
         
         // ============ 生成分享图片 ============
         function generateShareImage(personality, pct) {
-            const canvas = document.getElementById('shareCanvas');
+            // 使用隐藏的Canvas生成图片（尺寸翻倍，更清晰）
+            const canvas = document.getElementById('shareGenerateCanvas');
             const ctx = canvas.getContext('2d');
-            const width = 300;
-            const height = 400;
+            const width = 600;
+            const height = 800;
+            const scale = 2; // 缩放比例
             
             // 清空画布
             ctx.clearRect(0, 0, width, height);
@@ -1917,39 +1919,38 @@ function getPersonalityImage(name) {
             // 绘制装饰圆
             ctx.fillStyle = 'rgba(255, 143, 163, 0.1)';
             ctx.beginPath();
-            ctx.arc(250, 50, 80, 0, Math.PI * 2);
+            ctx.arc(500, 100, 160, 0, Math.PI * 2);
             ctx.fill();
             
             ctx.fillStyle = 'rgba(152, 212, 187, 0.1)';
             ctx.beginPath();
-            ctx.arc(50, 350, 60, 0, Math.PI * 2);
+            ctx.arc(100, 700, 120, 0, Math.PI * 2);
             ctx.fill();
             
             // 标题
             ctx.fillStyle = '#4a4a4a';
-            ctx.font = '14px "PingFang SC", sans-serif';
+            ctx.font = 'bold 28px "PingFang SC", sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('我的恋爱废物类型', width / 2, 40);
+            ctx.fillText('我的恋爱废物类型', width / 2, 80);
             
             // 人格名称
             ctx.fillStyle = '#ff8fa3';
-            ctx.font = 'bold 24px "PingFang SC", sans-serif';
-            ctx.fillText(personality.name, width / 2, 80);
+            ctx.font = 'bold 48px "PingFang SC", sans-serif';
+            ctx.fillText(personality.name, width / 2, 160);
             
             // 人格标语
             ctx.fillStyle = '#9b9b9b';
-            ctx.font = '12px "PingFang SC", sans-serif';
-            // 文字换行
+            ctx.font = '24px "PingFang SC", sans-serif';
             const tagline = personality.tagline;
-            const maxWidth = width - 60;
+            const maxWidth = width - 120;
             let line = '';
-            let y = 110;
+            let y = 220;
             for (let char of tagline) {
                 const testLine = line + char;
                 if (ctx.measureText(testLine).width > maxWidth) {
                     ctx.fillText(line, width / 2, y);
                     line = char;
-                    y += 18;
+                    y += 36;
                 } else {
                     line = testLine;
                 }
@@ -1958,14 +1959,14 @@ function getPersonalityImage(name) {
             
             // 绘制小雷达图
             const radarX = width / 2;
-            const radarY = 220;
-            const radarR = 50;
+            const radarY = 440;
+            const radarR = 100;
             const radarSides = 8;
             const radarAngle = (Math.PI * 2) / radarSides;
             
             // 雷达图背景
             ctx.strokeStyle = '#f0ebe5';
-            ctx.lineWidth = 1;
+            ctx.lineWidth = 2;
             for (let i = 1; i <= 3; i++) {
                 ctx.beginPath();
                 const r = radarR * i / 3;
@@ -1995,14 +1996,34 @@ function getPersonalityImage(name) {
             ctx.fillStyle = 'rgba(255, 143, 163, 0.3)';
             ctx.fill();
             ctx.strokeStyle = '#ff8fa3';
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 3;
             ctx.stroke();
+            
+            // 绘制维度标签
+            ctx.fillStyle = '#9b9b9b';
+            ctx.font = '18px "PingFang SC", sans-serif';
+            dimensions.forEach((dim, i) => {
+                const angle = radarAngle * i - Math.PI / 2;
+                const labelR = radarR + 40;
+                const x = radarX + labelR * Math.cos(angle);
+                const y = radarY + labelR * Math.sin(angle);
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(dim, x, y);
+            });
             
             // 底部提示
             ctx.fillStyle = '#b5b5b5';
-            ctx.font = '10px "PingFang SC", sans-serif';
-            ctx.fillText('长按保存图片分享给朋友', width / 2, height - 30);
-            ctx.fillText('恋爱废物测试', width / 2, height - 15);
+            ctx.font = '20px "PingFang SC", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('长按保存图片分享给朋友', width / 2, height - 60);
+            ctx.fillStyle = '#d5d5d5';
+            ctx.font = '16px "PingFang SC", sans-serif';
+            ctx.fillText('恋爱废物测试', width / 2, height - 30);
+            
+            // 将Canvas转换为图片
+            const imgData = canvas.toDataURL('image/png');
+            document.getElementById('shareImage').src = imgData;
         }
 
         // ============ 雷达图 ============
