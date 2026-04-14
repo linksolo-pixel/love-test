@@ -1222,7 +1222,7 @@
                     '把手机交给闺蜜保管，每次想查看对方动态时，让闺蜜拿着手机',
                     '记住：你的人生除了恋爱还有很多事，比如搞钱'
                 ],
-                condition: (scores) => scores['恋爱投入'] >= 6 && scores['浪漫浓度'] >= 4
+                condition: (r) => r.highest === '恋爱投入' && (r.secondHighest === '浪漫浓度' || r.pct['浪漫浓度'] > 60)
             },
             {
                 id: 2,
@@ -1236,7 +1236,7 @@
                     '想暧昧前先问自己：真的喜欢吗？还是只是寂寞？',
                     '负责任的恋爱，比无效的暧昧更爽'
                 ],
-                condition: (scores) => scores['表达力'] <= -3 && scores['期待管理'] <= -3
+                condition: (r) => r.lowest === '表达力' && (r.secondLowest === '期待管理' || r.lowest === '期待管理')
             },
             {
                 id: 3,
@@ -1250,7 +1250,7 @@
                     '记住：主动不等于卑微，主动是勇敢',
                     '最坏的结果不过是回到原点，但原点也不会更差了'
                 ],
-                condition: (scores) => scores['表达力'] <= -4 && scores['恋爱投入'] <= -2
+                condition: (r) => r.secondLowest === '表达力' && (r.highest === '独立性' || r.secondHighest === '独立性')
             },
             {
                 id: 4,
@@ -1264,7 +1264,7 @@
                     '没有人能叫醒一个装睡的人，除非那个人长得特别好看',
                     '躺平可以，但别一边躺一边抱怨'
                 ],
-                condition: (scores) => scores['独立性'] >= 4 && scores['恋爱投入'] <= -3
+                condition: (r) => r.highest === '独立性' && (r.lowest === '恋爱投入' || r.secondLowest === '恋爱投入')
             },
             {
                 id: 5,
@@ -1278,7 +1278,7 @@
                     '参加一些兴趣小组，打开社交圈',
                     '星座血型可以信，但别让它们成为你的借口'
                 ],
-                condition: (scores) => scores['表达力'] <= -4 && scores['浪漫浓度'] <= -3
+                condition: (r) => r.lowest === '浪漫浓度' && (r.lowest === '表达力' || r.secondLowest === '表达力')
             },
             {
                 id: 6,
@@ -1292,7 +1292,7 @@
                     '把对方当普通人看待，别神化TA',
                     '害怕拒绝？那就先从小事练习，比如问路'
                 ],
-                condition: (scores) => scores['表达力'] <= -3 && scores['安全感'] <= -2
+                condition: (r) => r.lowest === '表达力' && (r.lowest === '安全感' || r.secondLowest === '安全感')
             },
             {
                 id: 7,
@@ -1306,7 +1306,7 @@
                     '与其被动的等人选，不如主动筛选',
                     '记住：你的价值不是由别人对你的态度决定的'
                 ],
-                condition: (scores) => scores['安全感'] <= -3 && scores['期待管理'] <= -2
+                condition: (r) => r.lowest === '安全感' && r.secondLowest === '恋爱投入'
             },
             {
                 id: 8,
@@ -1320,7 +1320,7 @@
                     '发一条消息不会死，但错过可能会后悔',
                     '主动是勇气，不是卑微'
                 ],
-                condition: (scores) => scores['独立性'] >= 3 && scores['表达力'] <= -2
+                condition: (r) => r.highest === '独立性' && (r.lowest === '表达力' || r.secondLowest === '表达力')
             },
             {
                 id: 9,
@@ -1334,7 +1334,7 @@
                     '和朋友约定，在你上头时提醒你',
                     '记住你单身时的清醒状态，写下来贴墙上'
                 ],
-                condition: (scores) => scores['浪漫浓度'] >= 3 && scores['期待管理'] <= -3
+                condition: (r) => r.highest === '浪漫浓度' && (r.lowest === '期待管理' || r.secondLowest === '期待管理')
             },
             {
                 id: 10,
@@ -1348,7 +1348,7 @@
                     '偶尔也可以期待一下，说不定有惊喜',
                     '一个人很好，但两个人可能会更好'
                 ],
-                condition: (scores) => scores['独立性'] >= 5 && scores['浪漫浓度'] <= -2
+                condition: (r) => r.highest === '独立性' && (r.lowest === '浪漫浓度' || r.secondLowest === '浪漫浓度')
             },
             {
                 id: 11,
@@ -1362,7 +1362,7 @@
                     '给自己设定一个"多想警报"，触发后就去做点别的事',
                     'TA没那么多内心戏，是你想太多了'
                 ],
-                condition: (scores) => scores['浪漫浓度'] >= 4 && scores['期待管理'] <= -4
+                condition: (r) => r.highest === '浪漫浓度' && r.secondLowest === '安全感'
             },
             {
                 id: 12,
@@ -1376,7 +1376,7 @@
                     '多给自己找事做，忙起来就没空想了',
                     '对方没那么多想法，是你想太多了'
                 ],
-                condition: (scores) => scores['期待管理'] <= -4 && scores['安全感'] <= -3
+                condition: (r) => r.lowest === '期待管理' && (r.lowest === '安全感' || r.secondLowest === '安全感')
             },
             {
                 id: 13,
@@ -1390,7 +1390,7 @@
                     '学会说"不"，你的感受很重要',
                     '记住：你值得被好好对待'
                 ],
-                condition: (scores) => scores['安全感'] <= -4 && scores['表达力'] <= -2
+                condition: (r) => r.lowest === '安全感' && (r.lowest === '表达力' || r.secondLowest === '表达力')
             },
             {
                 id: 14,
@@ -1404,7 +1404,7 @@
                     '试着发现对方的优点，而不是找缺点',
                     '没有人是完美的，包括你自己'
                 ],
-                condition: (scores) => scores['期待管理'] <= -3 && scores['浪漫浓度'] >= 2
+                condition: (r) => r.lowest === '期待管理' && (r.highest === '浪漫浓度' || r.secondHighest === '浪漫浓度')
             },
             {
                 id: 15,
@@ -1418,7 +1418,7 @@
                     '没有完美的对象，只有愿意磨合的两个人',
                     '实战经验为零，不如先下水试试'
                 ],
-                condition: (scores) => scores['恋爱投入'] <= -2 && scores['期待管理'] >= 3
+                condition: (r) => (r.highest === '期待管理' || r.secondHighest === '期待管理') && (r.lowest === '恋爱投入' || r.secondLowest === '恋爱投入')
             },
             {
                 id: 16,
@@ -1432,7 +1432,7 @@
                     '不要害怕问问题，不懂就问不丢人',
                     '从朋友开始，慢慢学习'
                 ],
-                condition: (scores) => scores['表达力'] <= -3 && scores['浪漫浓度'] <= -2
+                condition: (r) => r.lowest === '表达力' && r.lowest === '浪漫浓度'
             },
             {
                 id: 17,
@@ -1446,7 +1446,7 @@
                     '说出来才能被看见，沉默只会让你继续单身',
                     '承认自己渴望爱，不是丢人的事'
                 ],
-                condition: (scores) => scores['表达力'] <= -4 && scores['独立性'] >= 3
+                condition: (r) => r.lowest === '表达力' && r.highest === '独立性'
             },
             {
                 id: 18,
@@ -1460,7 +1460,7 @@
                     '不是每个人都需要表白，但你可以试试',
                     '错过比表白被拒更可惜'
                 ],
-                condition: (scores) => scores['浪漫浓度'] >= 3 && scores['表达力'] <= -3
+                condition: (r) => (r.highest === '浪漫浓度' || r.secondHighest === '浪漫浓度') && r.lowest === '表达力'
             },
             {
                 id: 19,
@@ -1474,7 +1474,7 @@
                     '真诚比数量更重要',
                     '总有一天你会累的，不如早点上岸'
                 ],
-                condition: (scores) => scores['独立性'] >= 4 && scores['期待管理'] >= 2
+                condition: (r) => r.highest === '独立性' && (r.highest === '期待管理' || r.secondHighest === '期待管理') && r.highest !== '恋爱投入'
             },
             {
                 id: 20,
@@ -1488,7 +1488,7 @@
                     '如果真的想要改变，就从"今天做一件不一样的事"开始',
                     '躺平可以，但别一边躺一边抱怨'
                 ],
-                condition: (scores) => scores['务实度'] >= 4 && scores['恋爱投入'] <= -2
+                condition: (r) => r.highest === '务实度' && (r.lowest === '恋爱投入' || r.secondLowest === '恋爱投入') && r.highest !== '独立性'
             }
         ];
 
@@ -1790,23 +1790,33 @@ function getPersonalityImage(name) {
         function showResult() {
             showPage('pageResult');
             
-            // 归一化分数
+            // 归一化分数到百分比
             const normalizedScores = {};
-            const maxPossible = { 
-                '恋爱投入': 10, '安全感': 10, '表达力': 10, '冲突处理': 10,
-                '浪漫浓度': 10, '独立性': 10, '期待管理': 10, '务实度': 10
-            };
-            
             dimensions.forEach(dim => {
                 const raw = scores[dim] || 0;
-                const max = maxPossible[dim];
-                normalizedScores[dim] = Math.max(0, Math.min(100, ((raw + max) / (2 * max)) * 100));
+                normalizedScores[dim] = Math.max(-10, Math.min(10, raw));
             });
             
-            // 找主人格
-            let mainPersonality = personalities[19];
+            // 计算百分比 (0-100)
+            const pct = {};
+            dimensions.forEach(dim => {
+                pct[dim] = ((normalizedScores[dim] + 10) / 20) * 100;
+            });
+            
+            // 找出得分最高和最低的维度
+            const sortedDims = Object.entries(pct).sort((a, b) => b[1] - a[1]);
+            const highest = sortedDims[0][0];
+            const secondHighest = sortedDims[1][0];
+            const lowest = sortedDims[sortedDims.length - 1][0];
+            const secondLowest = sortedDims[sortedDims.length - 2][0];
+            
+            // 构建匹配数据
+            const matchData = { highest, secondHighest, lowest, secondLowest, pct };
+            
+            // 使用新规则匹配人格
+            let mainPersonality = personalities[19]; // 默认"清醒的恋爱废物"
             for (const p of personalities) {
-                if (p.condition(scores)) {
+                if (p.condition(matchData)) {
                     mainPersonality = p;
                     break;
                 }
@@ -1817,7 +1827,7 @@ function getPersonalityImage(name) {
                 if (hp.name === '天选孤独命') {
                     return hp.condition(multiAnswers);
                 }
-                return hp.condition(answers) || hp.condition(scores);
+                return hp.condition(answers) || hp.condition(pct);
             });
             
             // 渲染人格配图
@@ -1856,7 +1866,7 @@ function getPersonalityImage(name) {
             }
             
             // 渲染雷达图
-            renderRadarChart(normalizedScores);
+            renderRadarChart(pct);
             renderRadarLabels();
             
             // 设置分享卡片
